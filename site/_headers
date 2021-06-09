@@ -1,0 +1,26 @@
+/*.js
+  cache-control: public, max-age=432000
+/sw.js
+  cache-control: public, max-age=0, must-revalidate
+/*.svg
+  cache-control: public, max-age=432000
+/*.ttf
+  cache-control: public, max-age=432000
+/*.woff
+  cache-control: public, max-age=432000
+/*.jpg
+  Access-Control-Allow-Origin: *
+  cache-control: public, max-age=604800
+/*.png
+  Access-Control-Allow-Origin: *
+  cache-control: public, max-age=604800
+/*.svg
+  Access-Control-Allow-Origin: *
+  cache-control: public, max-age=604800
+/*.mp4
+  Access-Control-Allow-Origin: *
+  cache-control: public, max-age=604800
+/*.json
+  cache-control: public, max-age=604800
+/*.bin
+  cache-control: public, max-age=604800

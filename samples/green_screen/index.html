@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        background: black;
+        color: #cccccc;
+      }
+      #c2 {
+        background-image: url(background.jpg);
+        background-repeat: no-repeat;
+        background-size: cover;
+      }
+
+      div {
+        float: left;
+        border: 10px solid #444444;
+        background: #3b3b3b;
+        margin-right: 10px;
+        padding: 0;
+      }
+
+      video {
+        width: 400px;
+        height: 225px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div>
+      <video id="video" src="green.mp4" width="400" muted autoplay />
+    </div>
+    <div>
+      <canvas id="c1" width="400" height="225"></canvas>
+    </div>
+    <div>
+      <canvas id="c2" width="400" height="225"></canvas>
+    </div>
+    <script type="text/javascript" src="index.js"></script>
+  </body>
+</html>

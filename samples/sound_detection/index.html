@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Detect audio events</title>
+    <link rel="stylesheet" href="style.css" />
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"
+    ></script>
+    <script type="text/javascript">
+      var video;
+      let audio_stack = [];
+      var labels = {};
+
+      const isVideoPlaying = (video) =>
+        !!(
+          video.currentTime > 0 &&
+          !video.paused &&
+          !video.ended &&
+          video.readyState > 2
+        );
+
+      const downsampleBuffer = (buffer, recordSampleRate, targetSampleRate) => {
+        if (targetSampleRate === recordSampleRate) return buffer;
+        if (targetSampleRate > recordSampleRate)
+          throw new Error(
+            "Target sample rate must be lower than recorded sample rate"
+          );
+
+        const sampleRateRatio = recordSampleRate / targetSampleRate;
+        const newLength = Math.round(buffer.length / sampleRateRatio);
+        const result = new Float32Array(newLength);
+
+        let offsetResult = 0;
+        let offsetBuffer = 0;
+
+        while (offsetResult < result.length) {
+          let nextOffsetBuffer = Math.round(
+            (offsetResult + 1) * sampleRateRatio
+          );
+          let accum = 0;
+          let count = 0;
+
+          for (
+            let i = offsetBuffer;
+            i < nextOffsetBuffer && i < buffer.length;
+            i++
+          ) {
+            accum += buffer[i];
+            count++;
+          }
+
+          result[offsetResult] = accum / count;
+          offsetResult++;
+          offsetBuffer = nextOffsetBuffer;
+        }
+
+        return result;
+      };
+
+      async function load() {
+        video = document.getElementById("video");
+
+        loadLabels();
+
+        await loadTF();
+
+        document.getElementById("content").style.visibility = "visible";
+
+        document.getElementById("loading").style.display = "none";
+      }
+
+      async function loadLabels() {
+        fetch("labels.json")
+          .then((response) => response.json())
+          .then((json) => {
+            labels = json;
+          });
+      }
+
+      async function loadTF() {
+        // Load yamnet model
+        model = await tf.loadGraphModel(
+          "https://tfhub.dev/google/tfjs-model/yamnet/tfjs/1",
+          {
+            fromTFHub: true,
+          }
+        );
+      }
+
+      async function setupAudioProcessing() {
+        const context = new AudioContext({
+          latencyHint: "playback",
+        });
+
+        var videoSource = context.createMediaElementSource(video);
+
+        const processor = context.createScriptProcessor(1024, 1, 1);
+
+        processor.channelInterpretation = "speakers";
+        processor.channelCount = 1;
+        processor.onaudioprocess = async (e) => {
+          if (!isVideoPlaying(video) || labels.length === 0) {
+            return;
+          }
+
+          const inputData = e.inputBuffer.getChannelData(0);
+          const downsampledBuffer = downsampleBuffer(
+            inputData,
+            context.sampleRate,
+            16000
+          );
+
+          audio_stack.push(downsampledBuffer);
+
+          if (audio_stack.length === 8) {
+            const inputData = audio_stack.reduce((acc, curr) =>
+              Float32Array.from([...acc, ...curr])
+            );
+
+            const input = tf.tensor(inputData);
+
+            const [scores, embeddings, spectrogram] = model.predict(input);
+
+            const { values, indices } = await scores.mean(0).topk(2);
+            const indexs = indices.toString().split("\n")[1];
+
+            const re = indexs
+              .replace("[", "")
+              .replace("]", "")
+              .split(",")
+              .map((data) => labels[Number(data)]);
+
+            var html = "";
+
+            re.forEach((label) => {
+              html +=
+                '<li id="results">' + label.emoji + " " + label.text + "</li>";
+            });
+
+            document.getElementById("results").innerHTML = html;
+
+            audio_stack = [];
+          }
+        };
+
+        processor.connect(context.destination);
+        videoSource.connect(processor);
+        videoSource.connect(context.destination);
+      }
+
+      function play() {
+        video.style.visibility = "visible";
+
+        setupAudioProcessing();
+
+        video.play();
+
+        document.getElementById("playButton").style.display = "none";
+      }
+    </script>
+  </head>
+
+  <body onload="load()">
+    <div class="container">
+      <h1>Detect audio events in a video</h1>
+      <div id="loading">
+        <div class="lds-spinner">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+        <br />
+        Loading tensorflow model..
+      </div>
+      <div id="content">
+        <button id="playButton" onclick="play()">Start example</button><br />
+        <video id="video" preload="auto" controls loop>
+          <source src="fuzz.mp4" type="video/mp4" />
+        </video>
+        <ul id="results"></ul>
+      </div>
+    </div>
+  </body>
+</html>

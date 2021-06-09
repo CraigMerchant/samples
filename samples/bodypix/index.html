@@ -1,0 +1,162 @@
+<html>
+  <head>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/body-pix@2.0"></script>
+    <link rel="stylesheet" href="style.css">
+    <script type="text/javascript">
+      var img;
+      var canvas;
+      var net;
+      var personSegmentaton;
+      var partSegmentation;
+
+      // Load bodypix and setup image/canvas
+      async function loaded(){
+        net = await bodyPix.load({
+          architecture: 'MobileNetV1',
+          outputStride: 16,
+          multiplier: 0.75,
+          quantBytes: 2
+        });
+
+        canvas = document.getElementById('canvas');
+        img = document.getElementById('image');
+
+        loadFilter();
+      }
+
+      function finishedLoading(){
+        document.getElementById("loading").style.display = "none";
+      }
+
+      // Load segments for one person and cache for later
+      async function personSegmentation(){
+        if(personSegmentaton){
+          return personSegmentaton;
+        }
+
+        personSegmentaton = await net.segmentPerson(img);
+
+        return personSegmentaton;
+      }
+
+      // Load body parts for one person and cache for later
+      async function personPartsSegmentation(){
+        if(partSegmentation){
+          return partSegmentation;
+        }
+
+        partSegmentation = await net.segmentPersonParts(img);
+
+        return partSegmentation;
+      }
+
+      // Filter types
+      async function bokeh(){
+        const backgroundBlurAmount = 7;
+        const edgeBlurAmount = 3;
+        const flipHorizontal = false;
+
+        const person = await personSegmentation();
+
+        bodyPix.drawBokehEffect(canvas, img, person, backgroundBlurAmount, edgeBlurAmount, flipHorizontal);
+      }
+
+      async function pixelate(){
+        const parts = await personPartsSegmentation();
+
+        const coloredPartImage = bodyPix.toColoredPartMask(parts);
+        const opacity = 0.7;
+        const flipHorizontal = false;
+        const maskBlurAmount = 0;
+        const pixelCellWidth = 10.0;
+
+        bodyPix.drawPixelatedMask(
+            canvas, img, coloredPartImage, opacity, maskBlurAmount,
+            flipHorizontal, pixelCellWidth);
+      }
+
+      async function mask(){
+        const person = await personSegmentation();
+
+        const coloredPartImage = bodyPix.toMask(person);
+        const opacity = 0.8;
+        const flipHorizontal = false;
+        const maskBlurAmount = 0;
+
+        bodyPix.drawMask(
+            canvas, img, coloredPartImage, opacity, maskBlurAmount,
+            flipHorizontal);  
+      }
+
+      async function blurface(){
+        const parts = await personPartsSegmentation();
+
+        const faceBlurAmount = 10;
+        const edgeBlurAmount = 10;
+        const flipHorizontal = false;
+        const faceBodyPartIdsToBlur = [0, 1];
+
+        bodyPix.blurBodyPart(
+            canvas, img, parts, faceBodyPartIdsToBlur,
+            faceBlurAmount, edgeBlurAmount, flipHorizontal);
+      }
+
+      // Change filter type
+      function loadFilter(){
+        const val = document.querySelector('input[name="filter"]:checked').value;
+
+        // Clear canvas of previous image
+        const context = canvas.getContext('2d');
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        if(val == "bokeh"){
+          bokeh();
+        } else if(val == "pixelated"){
+          pixelate();
+        } else if(val == "mask"){
+          mask();
+        } else if(val == "blurface"){
+          blurface();
+        }
+
+        finishedLoading();
+      }
+
+    </script>
+    <title>Bodypix example</title>
+ </head>
+
+  <body onload="loaded()">
+    <h2>Input</h2>
+    <img id="image" src="person.jpg" crossorigin="anonymous" />
+
+    <h2>Change filter type</h2>
+    <ul class="segmented-control">
+      <li class="segmented-control__item">
+          <input class="segmented-control__input" onclick="loadFilter();" type="radio" value="bokeh" name="filter" id="bokeh" checked>
+          <label class="segmented-control__label" for="bokeh">Bokeh</label>
+      </li>
+      <li class="segmented-control__item">
+          <input class="segmented-control__input" onclick="loadFilter();" type="radio" value="pixelated" name="filter" id="pixelated" >
+          <label class="segmented-control__label" for="pixelated">Pixelated</label>
+      </li>
+      <li class="segmented-control__item">
+          <input class="segmented-control__input" onclick="loadFilter();" type="radio" value="mask" name="filter" id="mask" >
+          <label class="segmented-control__label" for="mask">Mask</label>
+      </li>
+      <li class="segmented-control__item">
+          <input class="segmented-control__input" onclick="loadFilter();" type="radio" value="blurface" name="filter" id="blurface" >
+          <label class="segmented-control__label" for="blurface">Blur face</label>
+      </li>
+    </ul>
+
+    <h2>Output</h2>
+    <div id="loading">
+      <div class="lds-spinner">
+        <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+      </div>
+    </div>
+    <canvas id="canvas"></canvas>
+  </body>
+</html>

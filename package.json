@@ -1,0 +1,27 @@
+{
+  "name": "craig-samples",
+  "version": "1.0.0",
+  "description": "",
+  "main": "build_site.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node build_site.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CraigMerchant/samples.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CraigMerchant/samples/issues"
+  },
+  "homepage": "https://github.com/CraigMerchant/samples#readme",
+  "dependencies": {
+    "fs-extra": "^10.0.0",
+    "markdown-it": "^12.0.6",
+    "pug": "^3.0.2",
+    "request": "^2.88.2"
+  }
+}

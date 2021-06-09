@@ -1,0 +1,44 @@
+doctype html
+html(lang="en")
+  head
+    title= pageTitle
+    meta(name='viewport', content='width=device-width, user-scalable=no,initial-scale=1')
+    meta(property='og:image', content='https://craigmerchant.dev/assets/screenshot.jpg?1')
+    meta(property='og:title', content='CraigMerchant.dev')
+    meta(property='og:description', content='A collection of sample projects')
+    meta(property='og:type', content='website')
+    link(rel='stylesheet', href='assets/pure-min.css')
+    link(rel='stylesheet', href='assets/grids-responsive-min.css')
+    link(rel='stylesheet', href='assets/styles.css')
+  body
+    div(class='pure-g', id='layout')
+      div(class='sidebar pure-u-1 pure-u-md-1-4')
+        div(class='header')
+          h1(class='brand-title')= 'CRAIGMERCHANT'
+          h2(class='brand-tagline')= 'A collection of sample projects'
+
+          nav(class='nav')
+            ul(class='nav-list')
+              li(class='nav-item')
+                a(href='https://github.com/craigmerchant', target='_blank')
+                  img(src='assets/github.svg')
+      
+      div(class='content pure-u-1 pure-u-md-3-4')
+        div
+          div(class='posts')
+            h1(class='content-subhead')= 'Recent Posts'
+
+            each val in posts
+              section(class='post')
+                header(class='post-header')
+                  h2(class='post-title')
+                    a(href=val['url'])= val['title']
+                  p(class='post-meta')
+                    span= val['created']+' '
+                    a(class='post-category post-category-source', href=val['source'], target='_blank')= 'Source'
+
+                div(class='post-description')
+                  p!= val['body']
+                  a(class='post-category post-category-sample', href=val['url'], target='_blank')= 'View example'
+                  div(class='clear')
+                  br
