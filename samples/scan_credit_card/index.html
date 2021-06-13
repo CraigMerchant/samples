@@ -5,8 +5,10 @@
         <title>Credit Card Scanner</title>
         <script type="text/javascript">
 
+            var cardReader;
+
             async function loaded() {
-                const cardReader = new CreditCardReader();
+                cardReader = new CreditCardReader();
                 readSampleCard(document.getElementById("card1"));
             }
 
