@@ -68,7 +68,7 @@ class CreditCardReader {
             img.onload = () => resolve(img);
             img.onerror = () => reject(img);
             img.onerror = reject;
-            img.src = "ocr_numbers.jpg";
+            img.src = "assets/ocr_numbers.jpg";
         });
     }
 
