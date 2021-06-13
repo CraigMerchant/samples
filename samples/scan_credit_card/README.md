@@ -1,6 +1,6 @@
 ---
 title: Credit card scanner
-created: 2021-05-29
+created: 2021-06-13
 ---
 
 [![Screenshot](https://craigmerchant.dev/samples/scan_credit_card/screenshot.jpg)](https://craigmerchant.dev/samples/scan_credit_card)

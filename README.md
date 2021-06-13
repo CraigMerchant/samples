@@ -11,6 +11,9 @@ https://craigmerchant.dev
 ### Green screen
 [Source](https://github.com/CraigMerchant/samples/tree/main/samples/green_screen) - [Demo](https://craigmerchant.dev/samples/green_screen/)
 
+### Credit card scanner
+[Source](https://github.com/CraigMerchant/samples/tree/main/samples/scan_credit_card) - [Demo](https://craigmerchant.dev/samples/scan_credit_card/)
+
 ### Take webpage screenshot with node
 [Source](https://github.com/CraigMerchant/samples/tree/main/samples/screenshot) - [Demo](https://craigmerchant.dev/samples/screenshot/)
 
