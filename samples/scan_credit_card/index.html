@@ -1,115 +1,105 @@
 <!DOCTYPE html>
 <html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Credit Card Scanner</title>
+        <script type="text/javascript" src="js/CreditCardReader.js"></script>
+        <script type="text/javascript">
+            var cardReader;
 
-<head>
-    <meta charset="utf-8" />
-    <title>Credit Card Scanner</title>
-    <script type="text/javascript">
-    var cardReader;
-
-    async function loaded() {
-        loadOpenCv(() => {
-            cardReader = new CreditCardReader();
-            readSampleCard(document.getElementById("card1"));
-        })
-    }
-
-    function callBack() {
-        cardReader = new CreditCardReader();
-        readSampleCard(document.getElementById("card1"));
-    }
-
-    async function readSampleCard(img) {
-        document.getElementById("output").innerText = "Loading..";
-
-        const result = await cardReader.getCardFromImage(img);
-
-        document.getElementById("output").innerText = JSON.stringify(
-            result,
-            null,
-            2
-        );
-    }
-
-    function loadOpenCv(onloadCallback) {
-        let script = document.createElement("script");
-        script.setAttribute("async", "");
-        script.setAttribute("type", "text/javascript");
-        script.addEventListener("load", () => {
-            if (typeof cv.then === "function") {
-                cv.then((loadedCv) => {
-                    cv = loadedCv;
-                    onloadCallback();
-                });
-            } else if (cv.getBuildInformation) {
-                onloadCallback();
-            } else {
-                // WASM
-                cv["onRuntimeInitialized"] = () => {
-                    onloadCallback();
-                };
+            async function loaded() {
+                cardReader = new CreditCardReader();
+                readSampleCard(document.getElementById("card1"));
             }
-        });
-        script.addEventListener("error", () => {
-            self.printError("Failed to load");
-        });
-        script.src = "./js/opencv.js";
-        let node = document.getElementsByTagName("script")[0];
-        node.parentNode.insertBefore(script, node);
-    }
-    </script>
-    <style type="text/css">
-    html,
-    body {
-        font-family: sans-serif;
-    }
 
-    ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
+            function callBack() {
+                cardReader = new CreditCardReader();
+                readSampleCard(document.getElementById("card1"));
+            }
 
-    img {
-        cursor: pointer;
-        height: 200px;
-    }
+            async function readSampleCard(img) {
+                document.getElementById("output").innerText = "Loading..";
 
-    li {
-        float: left;
-        margin-right: 30px;
-    }
+                const result = await cardReader.getCardFromImage(img);
 
-    hr {
-        margin-top: 30px;
-        margin-bottom: 30px;
-    }
+                document.getElementById("output").innerText = JSON.stringify(
+                    result,
+                    null,
+                    2
+                );
+            }
+        </script>
+        <style type="text/css">
+            html,
+            body {
+                font-family: sans-serif;
+            }
 
-    .clear {
-        clear: both;
-    }
-    </style>
-</head>
+            ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
 
-<body onload="loaded()">
-    <h2>Select a card to read</h2>
-    <ul>
-        <li>
-            <img id="card1" src="assets/card.jpg" onClick="readSampleCard(this)" />
-        </li>
-        <li>
-            <img id="card2" src="assets/card2.jpg" onClick="readSampleCard(this)" />
-        </li>
-        <li>
-            <img id="card3" src="assets/card3.jpg" onClick="readSampleCard(this)" />
-        </li>
-    </ul>
-    <div class="clear" />
-    <br />
-    <hr />
-    <h2>Result</h2>
-    <pre><code id="output">Loading..</code></pre>
-    <script type="text/javascript" src="js/CreditCardReader.js"></script>
-</body>
+            img {
+                cursor: pointer;
+                height: 200px;
+            }
 
+            li {
+                float: left;
+                margin-right: 30px;
+            }
+
+            hr {
+                margin-top: 30px;
+                margin-bottom: 30px;
+            }
+
+            .clear {
+                clear: both;
+            }
+        </style>
+    </head>
+
+    <body>
+        <h2>Select a card to read</h2>
+        <ul>
+            <li>
+                <img
+                    id="card1"
+                    src="assets/card.jpg"
+                    onClick="readSampleCard(this)"
+                />
+            </li>
+            <li>
+                <img
+                    id="card2"
+                    src="assets/card2.jpg"
+                    onClick="readSampleCard(this)"
+                />
+            </li>
+            <li>
+                <img
+                    id="card3"
+                    src="assets/card3.jpg"
+                    onClick="readSampleCard(this)"
+                />
+            </li>
+        </ul>
+        <div class="clear" />
+        <br />
+        <hr />
+        <h2>Result</h2>
+        <pre><code id="output">Loading..</code></pre>
+        <script>
+            var Module = {
+                wasmBinaryFile: "js/opencv.wasm",
+                _main: function() {
+                    loaded();
+                },
+            };
+        </script>
+        <script async src="js/opencv.js"></script>
+    </body>
 </html>
