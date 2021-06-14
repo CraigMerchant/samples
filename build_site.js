@@ -68,15 +68,21 @@ async function buildSite() {
     }
 
     posts.push(post);
-
-    // Add to readme
-    readme += `### ${post.title}\n[Source](${post.source}) - [Demo](${post.fullSampleURL})\n\n`;
   });
 
   fs.writeFileSync("./README.md", readme);
 
   // Sort the posts by date
   posts.sort((a, b) => b.created.localeCompare(a.created));
+
+  // Write readme file
+  var i;
+  for (i = 0; i < posts.length; i++) {
+    const post = posts[i];
+
+    // Add to readme
+    readme += `### ${post.title}\n[Source](${post.source}) - [Demo](${post.fullSampleURL})\n\n`;
+  }
 
   var html = pug.renderFile("./site/template.pug", {
     pageTitle: "CraigMerchant.dev",
