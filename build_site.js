@@ -70,8 +70,6 @@ async function buildSite() {
     posts.push(post);
   });
 
-  fs.writeFileSync("./README.md", readme);
-
   // Sort the posts by date
   posts.sort((a, b) => b.created.localeCompare(a.created));
 
@@ -83,6 +81,8 @@ async function buildSite() {
     // Add to readme
     readme += `### ${post.title}\n[Source](${post.source}) - [Demo](${post.fullSampleURL})\n\n`;
   }
+
+  fs.writeFileSync("./README.md", readme);
 
   var html = pug.renderFile("./site/template.pug", {
     pageTitle: "CraigMerchant.dev",
