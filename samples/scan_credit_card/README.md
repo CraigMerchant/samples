@@ -7,4 +7,6 @@ created: 2021-06-13
 
 Scan credit card to find the card number using OpenCV.
 
+This uses a custom built OpenCV js file with only the required functions to reduce the file size.
+
 Then also detect card type and check if the sequence is valid.
