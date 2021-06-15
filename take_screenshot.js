@@ -14,7 +14,7 @@ function download(uri, filename, callback) {
 console.log("taking screenshot");
 
 download(
-  "https://scrapshotter.herokuapp.com/?vw=1600&vh=850&resize=true&w=950&h=638&url=" +
+  "https://scrapshotter.herokuapp.com/?vw=950&vh=850&url=" +
     sampleBase +
     "&output=binary",
   "./site/assets/screenshot.jpg",
