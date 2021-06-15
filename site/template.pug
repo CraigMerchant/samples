@@ -12,7 +12,7 @@ html(lang="en")
     link(rel='stylesheet', href='assets/styles.css')
   body
     div(class='pure-g', id='layout')
-      div(class='sidebar pure-u-1 pure-u-md-1-4')
+      div(class='sidebar pure-u-1')
         div(class='header')
           h1(class='brand-title')= 'CRAIGMERCHANT'
           h2(class='brand-tagline')= 'A collection of sample projects'
@@ -23,8 +23,8 @@ html(lang="en")
                 a(href='https://github.com/craigmerchant', target='_blank')
                   img(src='assets/github.svg', width=50, height=50)
       
-      div(class='content pure-u-1 pure-u-md-3-4')
-        div
+      div(class='pure-u-1')
+        div(class='content')
           div(class='posts')
             h1(class='content-subhead')= 'Recent Posts'
 
@@ -35,10 +35,11 @@ html(lang="en")
                     a(href=val['url'])= val['title']
                   p(class='post-meta')
                     span= val['created']+' '
-                    a(class='post-category post-category-source', href=val['source'], target='_blank')= 'Source'
+                    
 
                 div(class='post-description')
                   p!= val['body']
                   a(class='post-category post-category-sample', href=val['url'], target='_blank')= 'View example'
+                  a(class='post-category post-category-source', href=val['source'], target='_blank')= 'Source code'
                   div(class='clear')
                   br
