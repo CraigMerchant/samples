@@ -5,7 +5,8 @@
   "main": "build_site.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "node build_site.js"
+    "build": "node build_site.js",
+    "screenshot": "node take_screenshot.js"
   },
   "repository": {
     "type": "git",
